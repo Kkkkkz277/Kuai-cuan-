@@ -901,6 +901,32 @@
         }
         .play-btn:hover { transform: scale(1.1); }
 
+        /* 纯CSS播放/暂停图标 */
+        .icon-play {
+            width: 0; 
+            height: 0; 
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 9px solid white;
+            margin-left: 2px;
+        }
+        .icon-pause {
+            width: 9px;
+            height: 11px;
+            position: relative;
+        }
+        .icon-pause::before, .icon-pause::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: white;
+            border-radius: 1px;
+        }
+        .icon-pause::before { left: 0; }
+        .icon-pause::after { right: 0; }
+
         /* 播放列表弹窗化 (在下方弹出) */
         .widget-footer { position: relative; margin-left: 10px; }
         .playlist-toggle { 
@@ -1166,7 +1192,7 @@
             
             <div class="controls">
                 <button class="control-btn" onclick="prevMusic()"><div class="icon-prev"></div></button>
-                <div class="play-btn" onclick="togglePlay()" id="play-pause-btn">▶</div>
+                <div class="play-btn" onclick="togglePlay()" id="play-pause-btn"><div class="icon-play"></div></div>
                 <button class="control-btn" onclick="nextMusic()"><div class="icon-next"></div></button>
             </div>
             
@@ -1469,6 +1495,9 @@
                 <div class="form-group">
                     <label>自定义提示词 / 风格设定 (仅针对文风、禁忌词等)</label>
                     <textarea id="system-prompt"></textarea>
+                    <div style="text-align:right; margin-top:5px;">
+                         <button class="btn btn-secondary" style="padding: 5px 15px; font-size: 12px;" onclick="saveSystemPromptOnly()">💾 保存提示词</button>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -2988,9 +3017,15 @@ JSON 格式要求：
             audioPlayer.volume = val;
         }
 
+        function saveSystemPromptOnly() {
+             const prompt = document.getElementById('system-prompt').value;
+             localStorage.setItem('system_prompt', prompt);
+             alert("✅ 提示词已单独保存！");
+        }
+
         function updatePlayerUI() {
             const btn = document.getElementById('play-pause-btn');
-            btn.innerText = isPlaying ? '⏸' : '▶';
+            btn.innerHTML = isPlaying ? '<div class="icon-pause"></div>' : '<div class="icon-play"></div>';
             
             // 封面旋转控制
             const cover = document.getElementById('music-cover');
